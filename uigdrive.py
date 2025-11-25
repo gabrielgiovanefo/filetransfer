@@ -24,8 +24,8 @@ def get_file_hash(path, block_size=65536):
     return md5.hexdigest()
 
 def get_drive():
-    client_secrets_file = 'client_secrets.json'
-    credentials_file = 'credentials.json'
+    client_secrets_file = '/home/gostlimoss62/Documents/1A_projects/file_transfer/client_secrets.json'
+    credentials_file = '/home/gostlimoss62/Documents/1A_projects/file_transfer/credentials.json'
 
     gauth = GoogleAuth()
 
@@ -43,6 +43,11 @@ def get_drive():
 
     if gauth.credentials is None:
         gauth.LocalWebserverAuth()
+        if not gauth.credentials.refresh_token:
+            print("No refresh_token found. Trying again with offline access...")
+            gauth.settings['oauth_scope'] = ['https://www.googleapis.com/auth/drive']
+            gauth.settings['get_refresh_token'] = True
+            gauth.LocalWebserverAuth()
     elif gauth.access_token_expired:
         gauth.Refresh()
     else:
